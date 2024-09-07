@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=3.4", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dynamic = ["version"]
+
+name = "O-An-Quan-AI"
+description = "An AI model for the traditional Vietnamese game O An Quan"
+readme = "README.md"
+requires-python = ">=3.10, <3.13"
+license = "MIT"
+authors = [{ name = "Ngan Huyen Thi Nguyen" }]
+keywords = ["oanquan", "game", "ai", "model"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "numpy",
+    "torch",
+    "matplotlib",
+    "stable-baselines3",
+    "gym",
+]
+
+[project.urls]
+Homepage = "https://github.com/huyenngn/oanquan"
+Documentation = "https://huyenngn.github.io/oanquan/"
+
+[project.optional-dependencies]
+docs = ["furo", "sphinx", "sphinx-copybutton", "tomli; python_version<'3.11'"]
+
+test = ["pytest", "pytest-cov"]
+
+[tool.pytest.ini_options]
+addopts = """
+  --import-mode=importlib
+  --strict-config
+  --strict-markers
+"""
+testpaths = ["tests"]
+xfail_strict = true
+
+[tool.setuptools]
+platforms = ["any"]
+zip-safe = false
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+include = ["server", "server.*"]
+
+[tool.setuptools_scm]
+# This section must exist for setuptools_scm to work
+local_scheme = "no-local-version"
