@@ -1,0 +1,14 @@
+services:
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8000:8000"
+
+    demo:
+        build:
+            context: ./demo
+            dockerfile: Dockerfile
+        ports:
+            - "80:80"

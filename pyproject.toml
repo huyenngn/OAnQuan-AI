@@ -9,7 +9,7 @@ name = "O-An-Quan-AI"
 description = "An AI model for the traditional Vietnamese game O An Quan"
 readme = "README.md"
 requires-python = ">=3.10, <3.13"
-license = "MIT"
+license = { text = "MIT" }
 authors = [{ name = "Ngan Huyen Thi Nguyen" }]
 keywords = ["oanquan", "game", "ai", "model"]
 classifiers = [
@@ -25,11 +25,12 @@ classifiers = [
 dependencies = [
     "fastapi",
     "uvicorn",
-    "numpy",
-    "torch",
-    "matplotlib",
-    "stable-baselines3",
-    "gym",
+    "pydantic",
+    # "numpy",
+    # "torch",
+    # "matplotlib",
+    # "stable-baselines3",
+    # "gym",
 ]
 
 [project.urls]
@@ -58,7 +59,7 @@ zip-safe = false
 "*" = ["py.typed"]
 
 [tool.setuptools.packages.find]
-include = ["server", "server.*"]
+include = ["oanquan_ai", "oanquan_ai.*"]
 
 [tool.setuptools_scm]
 # This section must exist for setuptools_scm to work
