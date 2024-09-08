@@ -1,4 +1,4 @@
-# Ô ăn quan
+# Ô ăn quan AI
 
 ![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
 ![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg)

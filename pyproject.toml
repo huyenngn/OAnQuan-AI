@@ -9,7 +9,7 @@ name = "O-An-Quan-AI"
 description = "An AI model for the traditional Vietnamese game O An Quan"
 readme = "README.md"
 requires-python = ">=3.10, <3.13"
-license = "MIT"
+license = { text = "MIT" }
 authors = [{ name = "Ngan Huyen Thi Nguyen" }]
 keywords = ["oanquan", "game", "ai", "model"]
 classifiers = [
@@ -25,6 +25,7 @@ classifiers = [
 dependencies = [
     "fastapi",
     "uvicorn",
+    "pydantic",
     "numpy",
     "torch",
     "matplotlib",
