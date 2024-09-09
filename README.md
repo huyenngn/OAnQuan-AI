@@ -19,24 +19,18 @@ source .venv/bin/activate
 pip install -e '.[docs,test]'
 ```
 
-Before running the app, you will need to build the frontend. This is needed by the backend to have statics to serve:
-
-```sh
-cd client
-npm install
-npm run build
-```
-
 To develop the frontend, use the following command:
 
 ```sh
+cd demo
+npm install
 npm run dev
 ```
 
 To run the backend, use the following command:
 
 ```sh
-python -m server.app
+python -m oanquan_ai
 ```
 
 The backend server will be running at `http://localhost:8000` and the live frontend will be served at `http://localhost:5173`.
