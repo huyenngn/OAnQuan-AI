@@ -10,7 +10,7 @@ const props = defineProps(['id', 'count', 'selectedCitizen', 'makeMove', 'setSel
 <template>
     <div class="citizen clickable" :id="'field' + id" @click="setSelectedCitizen(id)">
         <Counter :count="count" :id="'counter' + id" />
-        <Direction v-if="selectedCitizen === id && count != 0" @left="makeMove(id, 1)" @right="makeMove(id, -1)" />
+        <Direction v-if="selectedCitizen === id && count !== 0" @left="makeMove(id, 1)" @right="makeMove(id, -1)" />
     </div>
 </template>
 

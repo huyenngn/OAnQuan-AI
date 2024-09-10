@@ -6,23 +6,33 @@ import { RouterLink } from 'vue-router';
 <template>
     <nav>
         <RouterLink to="/game/easy">
-            <Button>EASY</Button>
+            <Button color="green">EASY</Button>
+        </RouterLink>
+        <RouterLink to="/game/medium">
+            <Button>MEDIUM</Button>
         </RouterLink>
         <RouterLink to="/game/hard">
             <Button color="orange">HARD</Button>
         </RouterLink>
         <RouterLink to="/game/impossible">
-            <Button color="green">IMPOSSIBLE</Button>
-        </RouterLink>
-        <RouterLink to="/credits">
-            <Button color="red">CREDITS</Button>
+            <Button color="red">IMPOSSIBLE</Button>
         </RouterLink>
     </nav>
+    <p>
+        Created by <a href="https://huyenngn.github.io/" target="_blank">Huyen Nguyen</a>
+    </p>
+    <p>
+        Check out <a href="https://github.com/huyenngn/OAnQuan-AI" target="_blank">the code on GitHub</a>.
+    </p>
 </template>
 
 <style scoped>
 nav {
     display: flex;
     flex-direction: column;
+}
+
+p {
+    font-size: 1rem;
 }
 </style>

@@ -28,18 +28,20 @@ def get_move_func(level: str):
     level.upper()
     if level == "EASY":
         return make_random_move
-    if level == "HARD":
+    if level == "MEDIUM":
         func = random.choices(
-            [make_random_move, make_best_move], cum_weights=[0.7, 0.3]
+            [make_random_move, make_rl_move], cum_weights=[0.7, 0.3]
         )[0]
         return func
-    return make_best_move
+    if level == "HARD":
+        return make_ab_move
+    return make_rl_move
 
 
 @app.get("/game/start")
 def start_game(level: str = "EASY"):
     """Start a new game of O An Quan."""
-    players = [Player.COMPUTER, Player.YOU]
+    players = [Player.COMPUTER, Player.PLAYER]
     game = OAnQuan(turn=random.choice(players).value)
     logger.info("New game started. Turn: %s", game.get_current_player().name)
     if game.get_current_player() == Player.COMPUTER:
@@ -51,14 +53,12 @@ def start_game(level: str = "EASY"):
         "status": "Game started",
         "game": game.model_dump(),
         "last_move": last_move,
-        "next_moves": game.get_allowed_moves(),
     }
 
 
 def make_random_move(game: OAnQuan) -> Move:
-    """Computer makes a random allowed move."""
-    allowed_moves = game.get_allowed_moves()
-    pos = random.choice(allowed_moves)
+    """Make a random allowed move."""
+    pos = random.choice(game.allowed_moves)
     direction = random.choice(
         [Direction.CLOCKWISE, Direction.COUNTER_CLOCKWISE]
     )
@@ -67,8 +67,13 @@ def make_random_move(game: OAnQuan) -> Move:
     return move
 
 
-def make_best_move(game: OAnQuan) -> Move:
-    """Computer makes the best allowed move."""
+def make_rl_move(game: OAnQuan) -> Move:
+    """Make move based on reinforcement learning."""
+    return make_random_move(game)
+
+
+def make_ab_move(game: OAnQuan) -> Move:
+    """Make move based on alpha-beta pruning."""
     return make_random_move(game)
 
 
@@ -77,7 +82,7 @@ def make_move(game: OAnQuan, move: Move, level: str = "EASY"):
     """Make a move and get the computer's response"""
 
     # Check if the player's move is valid
-    if move.pos not in game.get_allowed_moves():
+    if move.pos not in game.allowed_moves:
         raise HTTPException(status_code=400, detail="Invalid move position.")
 
     if game.end:
@@ -111,7 +116,6 @@ def make_move(game: OAnQuan, move: Move, level: str = "EASY"):
             "status": "Move accepted",
             "game": game.model_dump(),
             "last_move": last_move,
-            "next_moves": game.get_allowed_moves(),
         }
 
     except Exception as e:
