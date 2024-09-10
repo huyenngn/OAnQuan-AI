@@ -22,7 +22,7 @@ import { RouterLink } from 'vue-router';
         Created by <a href="https://huyenngn.github.io/" target="_blank">Huyen Nguyen</a>
     </p>
     <p>
-        Check out <a href="https://github.com/huyenngn/OAnQuan-AI" target="_blank">the code on GitHub</a>.
+        Check out the code on <a href="https://github.com/huyenngn/OAnQuan-AI" target="_blank">GitHub</a>.
     </p>
 </template>
 
@@ -34,5 +34,9 @@ nav {
 
 p {
     font-size: 1rem;
+}
+
+a {
+    font-weight: bold;
 }
 </style>

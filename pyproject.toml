@@ -26,11 +26,11 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "pydantic",
-    "numpy",
-    "torch",
-    "matplotlib",
-    "stable-baselines3",
-    "gym",
+    # "numpy",
+    # "torch",
+    # "matplotlib",
+    # "stable-baselines3",
+    # "gym",
 ]
 
 [project.urls]

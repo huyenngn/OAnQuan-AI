@@ -1,29 +1,35 @@
 # Ô ăn quan AI
 
-![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
-![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg)
+<!-- ![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
+![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg) -->
 
-An Ô ăn quan AI.
+To play the game, check out the [demonstrator](http://34.44.129.232/).
 
 # Quick Start
 
-Clone, then build and run the demonstrator locally with Docker:
+You can host the API server and the demonstrator on your own machine.
+
+Create a `.env` file in the demo directory (optional):
 
 ```sh
-docker build . -t api
-docker build demo -t demo
-docker run -d -p 8000:8000 api
-docker run -p 8080:8080 demo
+echo "VITE_API_URL=http://{EXTERNAL_IP}:8000" >> demo/.env
 ```
 
-The API server will be running at `http://localhost:8000` and the demonstrator will be served at `http://localhost:8080`.
+Build and run the demonstrator with Docker:
+
+```sh
+docker compose build
+docker compose up
+```
+
+The API server will be running at `http://localhost:8000` and the demonstrator will be served at `http://localhost`.
 
 # Development
 
 To set up a development environment, clone the project and install it into a virtual environment.
 
 ```sh
-git clone https://github.com/huyenngn/oanquan
+git clone https://github.com/huyenngn/OAnQuan-AI.git
 cd oanquan
 python -m venv .venv
 

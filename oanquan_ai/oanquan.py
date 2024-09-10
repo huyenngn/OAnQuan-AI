@@ -1,7 +1,7 @@
 """O An Quan game logic"""
 
 import enum
-import logging
+import math
 
 import pydantic
 
@@ -10,9 +10,6 @@ QUAN_FIELDS = [0, 6]
 INITIAL_BOARD = [10, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5]
 COMPUTER_FIELDS = [1, 2, 3, 4, 5]
 PLAYER_FIELDS = [7, 8, 9, 10, 11]
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 
 class Player(enum.Enum):
@@ -61,6 +58,7 @@ class OAnQuan(pydantic.BaseModel):
             self.score[Player.PLAYER.name] += sum(
                 self.board[QUAN_FIELDS[1] + 1 :]
             )
+            self.board = [0] * BOARD_SIZE
         return self.end
 
     def update_allowed_moves(self):
@@ -92,7 +90,7 @@ class OAnQuan(pydantic.BaseModel):
         """Move the stones in the board"""
 
         def get_normalized_pos(pos: int) -> int:
-            m = int(pos / BOARD_SIZE)
+            m = math.floor(pos / BOARD_SIZE)
             return pos - m * BOARD_SIZE
 
         pos, direction = move.pos, move.direction
@@ -103,14 +101,14 @@ class OAnQuan(pydantic.BaseModel):
         self.board[pos] = 0
 
         index = get_normalized_pos(index + direction.value)
-        if index in QUAN_FIELDS:
-            self.turn = not self.turn
-            self.update_allowed_moves()
-        elif self.board[index] != 0:
-            self.make_move(Move(pos=index, direction=direction))
-        else:
+        if self.board[index] == 0:
             index = get_normalized_pos(index + direction.value)
             self.score[self.get_current_player().name] += self.board[index]
             self.board[index] = 0
             self.turn = not self.turn
             self.update_allowed_moves()
+        elif index in QUAN_FIELDS:
+            self.turn = not self.turn
+            self.update_allowed_moves()
+        else:
+            self.make_move(Move(pos=index, direction=direction))

@@ -68,7 +68,7 @@ div span {
 }
 
 .waviy {
-    animation: waviy 1s infinite;
+    animation: waviy 1s;
 }
 
 @keyframes waviy {
