@@ -6,9 +6,11 @@ import UserCitizen from "@/components/UserCitizen.vue";
 import axios from "axios";
 import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
 
-const props = defineProps(["level"]);
+const props = defineProps(["level", "fast"]);
 
+const BACKEND_URL = 'http://127.0.0.1:8000';
 const DELAY = 700;
+const FAST_DELAY = 200;
 const BOARD_SIZE = 12;
 const QUAN_FIELDS = [0, 6];
 const COMPUTER_FIELDS = [1, 2, 3, 4, 5];
@@ -27,10 +29,9 @@ function getNormalizedPos(pos) {
     return pos - m * BOARD_SIZE;
 }
 
-function updateAllowedMoves() {
+async function updateAllowedMoves() {
     let fields = turn.value == "COMPUTER" ? COMPUTER_FIELDS : PLAYER_FIELDS;
     let allowed_moves = fields.filter(pos => board.value[pos] > 0);
-    console.log(turn.value, allowed_moves);
     if (allowed_moves || winner.value) {
         return
     }
@@ -44,8 +45,9 @@ function switchTurn() {
     turn.value = turn.value === "COMPUTER" ? "PLAYER" : "COMPUTER";
 }
 
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function delay() {
+    let delay = props.fast ? FAST_DELAY : DELAY;
+    return new Promise(resolve => setTimeout(resolve, delay));
 }
 
 async function animateMove(pos, direction) {
@@ -53,29 +55,30 @@ async function animateMove(pos, direction) {
     let toDistribute = board.value[pos];
     board.value[pos] = 0;
     let index = pos;
-    await delay(DELAY);
+    await delay();
 
     for (let i = 1; i <= toDistribute; i++) {
         index = getNormalizedPos(pos + i * direction);
         board.value[index] += 1;
-        await delay(DELAY);
+        await delay();
     }
 
     document.getElementById(`field${pos}`).classList.remove(turn.value === "COMPUTER" ? "green" : "blue");
     index = getNormalizedPos(index + direction);
-    if (QUAN_FIELDS.includes(index)) {
-        switchTurn();
-        updateAllowedMoves();
-    } else if (board.value[index] !== 0) {
-        await animateMove(index, direction);
-    } else {
+    if (board.value[index] === 0) {
         index = getNormalizedPos(index + direction);
         score.value[turn.value] += board.value[index];
         board.value[index] = 0;
         switchTurn();
-        updateAllowedMoves();
+        await updateAllowedMoves();
     }
-    await delay(DELAY);
+    else if (QUAN_FIELDS.includes(index)) {
+        switchTurn();
+        await updateAllowedMoves();
+    } else {
+        await animateMove(index, direction);
+    }
+    await delay();
 }
 
 
@@ -85,10 +88,9 @@ onBeforeMount(async () => {
         citizens.forEach(citizen => {
             citizen.classList.remove('clickable');
         });
-        const response = await axios.get("http://localhost:8000/game/start", {
+        const response = await axios.get(BACKEND_URL + "/game/start", {
             level: props.level,
         });
-        console.log(response.data);
         state.value = response.data.game;
         let next_move = response.data.last_move;
         if (next_move) {
@@ -115,12 +117,12 @@ async function makeMove(pos, direction) {
         });
         turn.value = "PLAYER";
         await animateMove(pos, direction);
-        const response = await axios.post("http://localhost:8000/game/move", {
+        const response = await axios.post(BACKEND_URL + "/game/move", {
             game: state.value,
             move: { pos, direction },
             level: props.level,
         });
-        console.log(response.data);
+        let cache = state.value
         state.value = response.data.game;
         let next_move = response.data.last_move;
         if (next_move) {
@@ -128,7 +130,13 @@ async function makeMove(pos, direction) {
             await animateMove(next_move.pos, next_move.direction);
         }
         if (response.data.winner) {
+            board.value = response.data.game.board;
+            score.value = response.data.game.score;
             winner.value = capitalize(response.data.winner);
+        }
+        if (JSON.stringify(board.value) !== JSON.stringify(state.value.board)) {
+            console.log(cache, pos, direction, next_move);
+            console.error("Board state mismatch:", board.value, state.value.board);
         }
         else {
             citizens.forEach(citizen => {

@@ -7,13 +7,18 @@ An Ô ăn quan AI.
 
 # Quick Start
 
-Clone, then build and run the demonstrator locally with Docker:
+Clone, then build and run the API with Docker:
 
 ```sh
 docker build . -t api
-docker build demo -t demo
 docker run -d -p 8000:8000 api
-docker run -p 8080:8080 demo
+```
+
+Clone, then build and run the demonstrator with Docker:
+
+```sh
+docker build demo -t demo
+docker run -d -p 8080:8080 demo
 ```
 
 The API server will be running at `http://localhost:8000` and the demonstrator will be served at `http://localhost:8080`.
@@ -23,7 +28,7 @@ The API server will be running at `http://localhost:8000` and the demonstrator w
 To set up a development environment, clone the project and install it into a virtual environment.
 
 ```sh
-git clone https://github.com/huyenngn/oanquan
+git clone https://github.com/huyenngn/OAnQuan-AI.git
 cd oanquan
 python -m venv .venv
 

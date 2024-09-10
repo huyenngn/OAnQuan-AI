@@ -1,6 +1,5 @@
 """API for the O An Quan game."""
 
-import logging
 import random
 
 import uvicorn
@@ -8,9 +7,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .oanquan import Direction, Move, OAnQuan, Player
-
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -43,7 +39,7 @@ def start_game(level: str = "EASY"):
     """Start a new game of O An Quan."""
     players = [Player.COMPUTER, Player.PLAYER]
     game = OAnQuan(turn=random.choice(players).value)
-    logger.info("New game started. Turn: %s", game.get_current_player().name)
+    game.update_allowed_moves()
     if game.get_current_player() == Player.COMPUTER:
         last_move = get_move_func(level)(game).model_dump()
     else:
