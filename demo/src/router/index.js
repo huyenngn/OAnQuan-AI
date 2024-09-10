@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import CreditsView from "../views/CreditsView.vue";
 import GameView from "../views/GameView.vue";
 import MenuView from "../views/MenuView.vue";
 
@@ -15,11 +14,6 @@ const router = createRouter({
             path: "/game/:level",
             name: "game",
             component: GameView,
-        },
-        {
-            path: "/credits",
-            name: "credits",
-            component: CreditsView,
         },
     ],
 });

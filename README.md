@@ -3,7 +3,20 @@
 ![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
 ![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg)
 
-A web-based game of Ô ăn quan with AI player.
+An Ô ăn quan AI.
+
+# Quick Start
+
+Clone, then build and run the demonstrator locally with Docker:
+
+```sh
+docker build . -t api
+docker build demo -t demo
+docker run -d -p 8000:8000 api
+docker run -p 8080:8080 demo
+```
+
+The API server will be running at `http://localhost:8000` and the demonstrator will be served at `http://localhost:8080`.
 
 # Development
 
@@ -30,7 +43,7 @@ npm run dev
 To run the backend, use the following command:
 
 ```sh
-python -m oanquan_ai
+python -m oanquan_ai.api
 ```
 
 The backend server will be running at `http://localhost:8000` and the live frontend will be served at `http://localhost:5173`.

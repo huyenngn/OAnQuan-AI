@@ -1,6 +1,6 @@
 <script setup>
 import Button from '@/components/Button.vue';
-import GameInstance from '@/components/Game.vue';
+import Game from '@/components/Game.vue';
 import { RouterLink } from 'vue-router';
 
 const props = defineProps(["level"]);
@@ -12,5 +12,5 @@ const props = defineProps(["level"]);
             BACK
         </Button>
     </RouterLink>
-    <GameInstance />
+    <Game :level="level" />
 </template>
