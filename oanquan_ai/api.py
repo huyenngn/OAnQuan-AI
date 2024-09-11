@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from .alpha_beta import minimax
 from .oanquan import Direction, Move, OAnQuan, Player
 
 app = FastAPI()
@@ -26,7 +27,7 @@ def get_move_func(level: str):
         return make_random_move
     if level == "MEDIUM":
         func = random.choices(
-            [make_random_move, make_rl_move], cum_weights=[0.7, 0.3]
+            [make_random_move, make_ab_move], cum_weights=[0.3, 0.7]
         )[0]
         return func
     if level == "HARD":
@@ -65,11 +66,13 @@ def make_random_move(game: OAnQuan) -> Move:
 
 def make_rl_move(game: OAnQuan) -> Move:
     """Make move based on reinforcement learning."""
-    return make_random_move(game)
+    return make_ab_move(game)
 
 
 def make_ab_move(game: OAnQuan) -> Move:
     """Make move based on alpha-beta pruning."""
+    if move := minimax(game)[1]:
+        return move
     return make_random_move(game)
 
 
