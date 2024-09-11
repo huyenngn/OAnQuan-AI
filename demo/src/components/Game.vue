@@ -65,14 +65,13 @@ async function animateMove(pos, direction) {
 
     document.getElementById(`field${pos}`).classList.remove(turn.value === "COMPUTER" ? "green" : "blue");
     index = getNormalizedPos(index + direction);
-    if (board.value[index] === 0) {
+    if (QUAN_FIELDS.includes(index)) {
+        switchTurn();
+        await updateAllowedMoves();
+    } else if (board.value[index] === 0) {
         index = getNormalizedPos(index + direction);
         score.value[turn.value] += board.value[index];
         board.value[index] = 0;
-        switchTurn();
-        await updateAllowedMoves();
-    }
-    else if (QUAN_FIELDS.includes(index)) {
         switchTurn();
         await updateAllowedMoves();
     } else {
@@ -173,7 +172,7 @@ onBeforeUnmount(() => {
 
 <template>
     <span v-if="winner">
-        {{ winner }} wins!
+        {{ winner }} wins! 🎉
     </span>
     <span v-else>
         {{ capitalize(turn) }}'s turn!
