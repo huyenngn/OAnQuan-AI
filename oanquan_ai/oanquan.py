@@ -95,10 +95,12 @@ class OAnQuan(pydantic.BaseModel):
 
         pos, direction = move.pos, move.direction
 
-        for i in range(1, self.board[pos] + 1):
+        to_distribute = self.board[pos]
+        self.board[pos] = 0
+
+        for i in range(1, to_distribute + 1):
             index = get_normalized_pos(pos + i * direction.value)
             self.board[index] += 1
-        self.board[pos] = 0
 
         index = get_normalized_pos(index + direction.value)
         if self.board[index] == 0:
