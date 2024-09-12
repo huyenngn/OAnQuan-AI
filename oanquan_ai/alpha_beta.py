@@ -2,7 +2,15 @@
 
 from copy import deepcopy
 
-from .oanquan import Direction, Move, OAnQuan, Player
+from .oanquan import (
+    COMPUTER_FIELDS,
+    PLAYER_FIELDS,
+    QUAN_FIELDS,
+    Direction,
+    Move,
+    OAnQuan,
+    Player,
+)
 
 
 def minimax(
@@ -50,6 +58,15 @@ def minimax(
 
 def evaluate_position(game: OAnQuan) -> float:
     """Evaluate the position of the game."""
-    if game.get_winner() != Player.COMPUTER.name:
+    if game.end and (game.get_winner() != Player.COMPUTER.name):
         return float("-inf")
-    return game.score[Player.PLAYER.name] - game.score[Player.COMPUTER.name]
+    points = {}
+    for name, fields in zip(
+        [Player.COMPUTER.name, Player.PLAYER.name],
+        [COMPUTER_FIELDS, PLAYER_FIELDS],
+    ):
+        points[name] = (
+            sum(game.board[pos] for pos in fields) + game.score[name]
+        )
+    points[Player.PLAYER.name] += sum(game.board[pos] for pos in QUAN_FIELDS)
+    return points[Player.PLAYER.name] - points[Player.COMPUTER.name]
