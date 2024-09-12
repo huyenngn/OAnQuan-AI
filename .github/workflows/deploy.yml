@@ -1,0 +1,33 @@
+name: Deploy to GCE VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the latest code from the main branch
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up SSH agent with the private key stored in GitHub Secrets
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.GCE_SSH_PRIVATE_KEY }}
+
+      # SSH into GCE VM and pull the latest code, build, and deploy
+      - name: Deploy to GCE VM
+        run: |
+          ssh -o StrictHostKeyChecking=no nganhuyennguyenthi@35.239.5.44 << 'EOF'
+            cd OAnQuan-AI
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose down
+            docker compose build
+            docker compose up -d
+          EOF
