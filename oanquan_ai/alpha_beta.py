@@ -1,5 +1,6 @@
 """Alpha-beta pruning algorithm for O An Quan game."""
 
+import typing as t
 from copy import deepcopy
 
 from .oanquan import (
@@ -13,16 +14,33 @@ from .oanquan import (
 )
 
 
+def evaluate_position(game: OAnQuan) -> float:
+    """Evaluate the position of the game."""
+    if game.check_end() and (game.get_winner() != Player.COMPUTER.name):
+        return float("-inf")
+    points = {}
+    for name, fields in zip(
+        [Player.COMPUTER.name, Player.PLAYER.name],
+        [COMPUTER_FIELDS, PLAYER_FIELDS],
+    ):
+        points[name] = (
+            sum(game.board[pos] for pos in fields) + game.score[name]
+        )
+    points[Player.PLAYER.name] += sum(game.board[pos] for pos in QUAN_FIELDS)
+    return points[Player.PLAYER.name] - points[Player.COMPUTER.name]
+
+
 def minimax(
     game: OAnQuan,
     depth: int = 5,
     maximizing: bool = True,
     alpha: float = float("-inf"),
     beta: float = float("inf"),
+    eval_func: t.Callable[[t.Any], float] = evaluate_position,
 ) -> tuple[float, Move | None]:
     """Minimax algorithm with alpha-beta pruning."""
     if depth == 0 or game.check_end():
-        return evaluate_position(game), None
+        return eval_func(game), None
 
     all_moves = [
         Move(pos=pos, direction=direction)
@@ -54,19 +72,3 @@ def minimax(
             if beta <= alpha:
                 break
         return min_eval, move_map[min_eval]
-
-
-def evaluate_position(game: OAnQuan) -> float:
-    """Evaluate the position of the game."""
-    if game.end and (game.get_winner() != Player.COMPUTER.name):
-        return float("-inf")
-    points = {}
-    for name, fields in zip(
-        [Player.COMPUTER.name, Player.PLAYER.name],
-        [COMPUTER_FIELDS, PLAYER_FIELDS],
-    ):
-        points[name] = (
-            sum(game.board[pos] for pos in fields) + game.score[name]
-        )
-    points[Player.PLAYER.name] += sum(game.board[pos] for pos in QUAN_FIELDS)
-    return points[Player.PLAYER.name] - points[Player.COMPUTER.name]
