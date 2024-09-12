@@ -18,16 +18,26 @@ def evaluate_position(game: OAnQuan) -> float:
     """Evaluate the position of the game."""
     if game.check_end() and (game.get_winner() != Player.COMPUTER.name):
         return float("-inf")
+
+    # Early game strategy: give more weight to stones on the board
+    stone_weight = 2
+    score_weight = 20
+
+    # Later in the game: give more weight to the score
+    if sum(game.board) < 50:
+        stone_weight = 1
+        score_weight = 30
+
     points = {}
     for name, fields in zip(
         [Player.COMPUTER.name, Player.PLAYER.name],
         [COMPUTER_FIELDS, PLAYER_FIELDS],
     ):
         points[name] = (
-            sum(game.board[pos] for pos in fields) + game.score[name]
+            stone_weight * sum(game.board[pos] for pos in fields)
+            + score_weight * game.score[name]
         )
-    points[Player.PLAYER.name] += sum(game.board[pos] for pos in QUAN_FIELDS)
-    return points[Player.PLAYER.name] - points[Player.COMPUTER.name]
+    return points[Player.COMPUTER.name] - points[Player.PLAYER.name]
 
 
 def minimax(

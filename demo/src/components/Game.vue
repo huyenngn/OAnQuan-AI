@@ -4,8 +4,11 @@ import Counter from "@/components/Counter.vue";
 import Quan from "@/components/Quan.vue";
 import UserCitizen from "@/components/UserCitizen.vue";
 import axios from "axios";
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { defineExpose, onBeforeUnmount, onMounted, ref } from "vue";
 
+defineExpose({
+    start_game
+})
 const props = defineProps(["level", "fast"]);
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
@@ -32,7 +35,7 @@ function getNormalizedPos(pos) {
 async function updateAllowedMoves() {
     let fields = turn.value == "COMPUTER" ? COMPUTER_FIELDS : PLAYER_FIELDS;
     let allowed_moves = fields.filter(pos => board.value[pos] > 0);
-    if (allowed_moves || winner.value) {
+    if (allowed_moves.length > 0 || winner.value) {
         return
     }
     score.value[turn.value] -= fields.length;
@@ -80,9 +83,10 @@ async function animateMove(pos, direction) {
     await delay();
 }
 
-
-onMounted(async () => {
-    document.addEventListener('click', handleClickOutside);
+async function start_game() {
+    board.value = [10, 5, 5, 5, 5, 5, 10, 5, 5, 5, 5, 5];
+    score.value = { PLAYER: 0, COMPUTER: 0 };
+    winner.value = "";
     try {
         let citizens = document.querySelectorAll('.clickable')
         citizens.forEach(citizen => {
@@ -97,12 +101,20 @@ onMounted(async () => {
             turn.value = "COMPUTER";
             await animateMove(next_move.pos, next_move.direction);
         }
+        else {
+            turn.value = "PLAYER"
+        }
         citizens.forEach(citizen => {
             citizen.classList.add('clickable');
         });
     } catch (error) {
         console.error("Error fetching game state:", error);
     }
+}
+
+onMounted(async () => {
+    document.addEventListener('click', handleClickOutside);
+    await start_game();
 });
 
 function capitalize(string) {
