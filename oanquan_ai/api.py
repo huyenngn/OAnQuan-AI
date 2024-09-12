@@ -72,6 +72,7 @@ def make_rl_move(game: OAnQuan) -> Move:
 def make_ab_move(game: OAnQuan) -> Move:
     """Make move based on alpha-beta pruning."""
     if move := minimax(game)[1]:
+        game.make_move(move)
         return move
     return make_random_move(game)
 
