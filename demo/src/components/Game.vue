@@ -4,7 +4,7 @@ import Counter from "@/components/Counter.vue";
 import Quan from "@/components/Quan.vue";
 import UserCitizen from "@/components/UserCitizen.vue";
 import axios from "axios";
-import { onBeforeMount, onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 
 const props = defineProps(["level", "fast"]);
 
@@ -81,7 +81,8 @@ async function animateMove(pos, direction) {
 }
 
 
-onBeforeMount(async () => {
+onMounted(async () => {
+    document.addEventListener('click', handleClickOutside);
     try {
         let citizens = document.querySelectorAll('.clickable')
         citizens.forEach(citizen => {
@@ -160,10 +161,6 @@ function setSelectedCitizen(citizen) {
         selectedCitizen.value = citizen;
     }
 }
-
-onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-});
 
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside);
