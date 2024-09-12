@@ -1,4 +1,4 @@
-name: Deploy to GCE VM
+name: Deploy
 
 on:
   push:

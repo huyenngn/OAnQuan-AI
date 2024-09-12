@@ -8,8 +8,8 @@ import { RouterLink } from 'vue-router';
         <RouterLink to="/game/easy">
             <Button color="green">EASY</Button>
         </RouterLink>
-        <RouterLink to="/game/medium">
-            <Button>MEDIUM</Button>
+        <RouterLink to="/game/normal">
+            <Button>NORMAL</Button>
         </RouterLink>
         <RouterLink to="/game/hard">
             <Button color="orange">HARD</Button>

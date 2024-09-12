@@ -1,11 +1,13 @@
 # Ô ăn quan AI
 
-<!-- ![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
-![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg) -->
+![Deploy Status](https://github.com/huyenngn/OAnQuan-AI/actions/workflows/deploy.yml/badge.svg)
+![License: MIT](https://img.shields.io/github/license/huyenngn/OAnQuan-AI)
+
+A Vietnamese traditional board game, Ô Ăn Quan, with an AI that uses the Minimax algorithm with Alpha-Beta pruning and Reinforcement Learning to play against human players.
 
 To play the game, check out the [demonstrator](http://35.239.5.44/).
 
-# Quick Start
+## Quick Start
 
 You can host the API server and the demonstrator on your own machine.
 
@@ -24,7 +26,7 @@ docker compose up
 
 The API server will be running at `http://localhost:8000` and the demonstrator will be served at `http://localhost`.
 
-# Development
+## Development
 
 To set up a development environment, clone the project and install it into a virtual environment.
 
@@ -53,3 +55,13 @@ python -m oanquan_ai.api
 ```
 
 The backend server will be running at `http://localhost:8000` and the live frontend will be served at `http://localhost:5173`.
+
+## Features
+
+-   [x] Play Ô ăn quan AI in easy mode
+-   [x] Minimax algorithm with Alpha-Beta pruning for normal and hard mode
+-   [ ] Reinforcement Learning for impossible mode
+-   [ ] Send real game data to cloud for training and analysis
+-   [ ] Leaderboard
+-   [ ] Tutorial
+-   [ ] Multiplayer mode

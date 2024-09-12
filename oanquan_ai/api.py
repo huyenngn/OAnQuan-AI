@@ -25,7 +25,7 @@ def get_move_func(level: str):
     level.upper()
     if level == "EASY":
         return make_random_move
-    if level == "MEDIUM":
+    if level == "NORMAL":
         func = random.choices(
             [make_random_move, make_ab_move], cum_weights=[0.3, 0.7]
         )[0]
