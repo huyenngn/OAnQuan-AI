@@ -3,7 +3,7 @@
 <!-- ![image](https://github.com/huyenngn/oanquan/actions/workflows/build-test.yml/badge.svg)
 ![image](https://github.com/huyenngn/oanquan/actions/workflows/lint.yml/badge.svg) -->
 
-To play the game, check out the [demonstrator](http://34.44.129.232/).
+To play the game, check out the [demonstrator](http://35.239.5.44/).
 
 # Quick Start
 
