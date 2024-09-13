@@ -1,5 +1,6 @@
 """API for the O An Quan game."""
 
+import enum
 import random
 
 import uvicorn
@@ -20,23 +21,31 @@ app.add_middleware(
 )
 
 
-def get_move_func(level: str):
+class Level(enum.Enum):
+    """Level of the game"""
+
+    EASY = "easy"
+    NORMAL = "normal"
+    HARD = "hard"
+    IMPOSSIBLE = "impossible"
+
+
+def get_move_func(level: Level):
     """Get the function to make a move based on the level."""
-    level.upper()
-    if level == "EASY":
+    if level == Level.EASY:
         return make_random_move
-    if level == "NORMAL":
+    if level == Level.NORMAL:
         func = random.choices(
             [make_random_move, make_ab_move], cum_weights=[0.3, 0.7]
         )[0]
         return func
-    if level == "HARD":
+    if level == Level.HARD:
         return make_ab_move
     return make_rl_move
 
 
-@app.get("/game/start")
-def start_game(level: str = "EASY"):
+@app.get("/game/start/{level}")
+def start_game(level: Level):
     """Start a new game of O An Quan."""
     players = [Player.COMPUTER, Player.PLAYER]
     game = OAnQuan(turn=random.choice(players).value)
@@ -77,8 +86,8 @@ def make_ab_move(game: OAnQuan) -> Move:
     return make_random_move(game)
 
 
-@app.post("/game/move")
-def make_move(game: OAnQuan, move: Move, level: str = "EASY"):
+@app.post("/game/move/{level}")
+def make_move(game: OAnQuan, move: Move, level: Level):
     """Make a move and get the computer's response"""
 
     # Check if the player's move is valid

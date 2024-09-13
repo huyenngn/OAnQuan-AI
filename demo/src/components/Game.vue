@@ -4,7 +4,7 @@ import Counter from "@/components/Counter.vue";
 import Quan from "@/components/Quan.vue";
 import UserCitizen from "@/components/UserCitizen.vue";
 import axios from "axios";
-import { defineExpose, onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 
 defineExpose({
     start_game
@@ -92,9 +92,7 @@ async function start_game() {
         citizens.forEach(citizen => {
             citizen.classList.remove('clickable');
         });
-        const response = await axios.get(BACKEND_URL + "/game/start", {
-            level: props.level,
-        });
+        const response = await axios.get(BACKEND_URL + "/game/start/" + props.level);
         state.value = response.data.game;
         let next_move = response.data.last_move;
         if (next_move) {
@@ -129,10 +127,9 @@ async function makeMove(pos, direction) {
         });
         turn.value = "PLAYER";
         await animateMove(pos, direction);
-        const response = await axios.post(BACKEND_URL + "/game/move", {
+        const response = await axios.post(BACKEND_URL + "/game/move/" + props.level, {
             game: state.value,
             move: { pos, direction },
-            level: props.level,
         });
         let cache = state.value
         state.value = response.data.game;
@@ -146,7 +143,7 @@ async function makeMove(pos, direction) {
             score.value = response.data.game.score;
             winner.value = capitalize(response.data.winner);
         }
-        if (JSON.stringify(board.value) !== JSON.stringify(state.value.board)) {
+        if (!winner.value && JSON.stringify(board.value) !== JSON.stringify(state.value.board)) {
             console.log(cache, pos, direction, next_move);
             console.error("Board state mismatch:", board.value, state.value.board);
         }
