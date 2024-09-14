@@ -7,8 +7,8 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from .alpha_beta import minimax
-from .oanquan import Direction, Move, OAnQuan, Player
+from oanquan_ai.alpha_beta import minimax
+from oanquan_ai.oanquan import Direction, Move, OAnQuan, Player
 
 app = FastAPI()
 
@@ -47,9 +47,7 @@ def get_move_func(level: Level):
 @app.get("/game/start/{level}")
 def start_game(level: Level):
     """Start a new game of O An Quan."""
-    players = [Player.COMPUTER, Player.PLAYER]
-    game = OAnQuan(turn=random.choice(players).value)
-    game.update_allowed_moves()
+    game = OAnQuan.start_game()
     if game.get_current_player() == Player.COMPUTER:
         last_move = get_move_func(level)(game).model_dump()
     else:

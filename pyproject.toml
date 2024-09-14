@@ -59,7 +59,7 @@ zip-safe = false
 "*" = ["py.typed"]
 
 [tool.setuptools.packages.find]
-include = ["server", "server.*"]
+include = ["oanquan_ai", "oanquan_ai.*"]
 
 [tool.setuptools_scm]
 # This section must exist for setuptools_scm to work

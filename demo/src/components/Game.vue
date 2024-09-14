@@ -45,7 +45,7 @@ async function updateAllowedMoves() {
 }
 
 function switchTurn() {
-    turn.value = turn.value === "COMPUTER" ? "PLAYER" : "COMPUTER";
+    turn.value = turn.value == "COMPUTER" ? "PLAYER" : "COMPUTER";
 }
 
 function delay() {
@@ -53,8 +53,15 @@ function delay() {
     return new Promise(resolve => setTimeout(resolve, delay));
 }
 
+function color_field(pos, color) {
+    document.getElementById(`field${pos}`).classList.add(color);
+}
+function uncolor_field(pos, color) {
+    document.getElementById(`field${pos}`).classList.remove(color);
+}
+
 async function animateMove(pos, direction) {
-    document.getElementById(`field${pos}`).classList.add(turn.value === "COMPUTER" ? "green" : "blue");
+    color_field(pos, turn.value == "COMPUTER" ? "green" : "blue");
     let toDistribute = board.value[pos];
     board.value[pos] = 0;
     let index = pos;
@@ -66,15 +73,24 @@ async function animateMove(pos, direction) {
         await delay();
     }
 
-    document.getElementById(`field${pos}`).classList.remove(turn.value === "COMPUTER" ? "green" : "blue");
+    uncolor_field(pos, turn.value == "COMPUTER" ? "green" : "blue");
     index = getNormalizedPos(index + direction);
-    if (QUAN_FIELDS.includes(index)) {
+    if (board.value[index] == 0) {
+        let next_index = getNormalizedPos(index + direction);
+        while ((board.value[index] == 0) && (board.value[next_index] != 0)) {
+            color_field(index, "red");
+            await delay();
+            score.value[turn.value] += board.value[next_index];
+            board.value[next_index] = 0;
+            uncolor_field(index, "red");
+            index = getNormalizedPos(next_index + direction);
+            next_index = getNormalizedPos(index + direction);
+        }
+
         switchTurn();
         await updateAllowedMoves();
-    } else if (board.value[index] === 0) {
-        index = getNormalizedPos(index + direction);
-        score.value[turn.value] += board.value[index];
-        board.value[index] = 0;
+    }
+    else if (QUAN_FIELDS.includes(index)) {
         switchTurn();
         await updateAllowedMoves();
     } else {
@@ -143,7 +159,7 @@ async function makeMove(pos, direction) {
             score.value = response.data.game.score;
             winner.value = capitalize(response.data.winner);
         }
-        if (!winner.value && JSON.stringify(board.value) !== JSON.stringify(state.value.board)) {
+        if (!winner.value && JSON.stringify(board.value) != JSON.stringify(state.value.board)) {
             console.log(cache, pos, direction, next_move);
             console.error("Board state mismatch:", board.value, state.value.board);
         }
@@ -164,7 +180,7 @@ function handleClickOutside(event) {
 }
 
 function setSelectedCitizen(citizen) {
-    if (selectedCitizen.value === citizen) {
+    if (selectedCitizen.value == citizen) {
         selectedCitizen.value = null;
     } else {
         selectedCitizen.value = citizen;
@@ -220,6 +236,11 @@ div {
     mix-blend-mode: multiply;
 }
 
+.red {
+    background-color: rgb(255, 155, 155);
+    mix-blend-mode: multiply;
+}
+
 .board {
     display: grid;
     grid-template-columns: 1.25fr repeat(5, 1fr) 1.27fr;
@@ -233,9 +254,13 @@ div {
 
 #field0 {
     grid-area: 1 / 1 / 3 / 2;
+    border-radius: 100% 0 0 100% / 50% 0 0 50%;
+    margin: 5% 0 5% 2%;
 }
 
 #field6 {
     grid-area: 1 / 7 / 3 / 8;
+    border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+    margin: 5% 10% 5% 0;
 }
 </style>

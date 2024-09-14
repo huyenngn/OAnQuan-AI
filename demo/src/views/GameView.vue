@@ -9,7 +9,7 @@ let fast = ref(false);
 
 <template>
     <div>
-        <Button @click="$refs.game.start_game()">
+        <Button @click="$router.go()">
             <img src="../assets/reload.png" />
         </Button>
         <RouterLink to="/">
@@ -24,7 +24,7 @@ let fast = ref(false);
             <img src="../assets/fast_forward.png" />
         </Button>
     </div>
-    <Game :level="$route.params.level" :fast="fast" ref="game" />
+    <Game :level="$route.params.level" :fast="fast" />
 </template>
 
 <style scoped>

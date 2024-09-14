@@ -2,6 +2,7 @@
 
 import enum
 import math
+import random
 
 import pydantic
 
@@ -41,6 +42,14 @@ class OAnQuan(pydantic.BaseModel):
     turn: bool = Player.COMPUTER.value
     end: bool = False
     allowed_moves: list[int] = COMPUTER_FIELDS
+
+    @classmethod
+    def start_game(cls):
+        """Start a new game of O An Quan"""
+        out = cls()
+        out.turn = random.choice([Player.COMPUTER.value, Player.PLAYER.value])
+        out.update_allowed_moves()
+        return out
 
     def get_current_player(self) -> Player:
         """Get Player who's turn it is"""
@@ -103,13 +112,18 @@ class OAnQuan(pydantic.BaseModel):
             self.board[index] += 1
 
         index = get_normalized_pos(index + direction.value)
-        if index in QUAN_FIELDS:
+        if self.board[index] == 0:
+            next_index = get_normalized_pos(index + direction.value)
+            while (self.board[index] == 0) and (self.board[next_index] != 0):
+                self.score[self.get_current_player().name] += self.board[
+                    next_index
+                ]
+                self.board[next_index] = 0
+                index = get_normalized_pos(next_index + direction.value)
+                next_index = get_normalized_pos(index + direction.value)
             self.turn = not self.turn
             self.update_allowed_moves()
-        elif self.board[index] == 0:
-            index = get_normalized_pos(index + direction.value)
-            self.score[self.get_current_player().name] += self.board[index]
-            self.board[index] = 0
+        elif index in QUAN_FIELDS:
             self.turn = not self.turn
             self.update_allowed_moves()
         else:

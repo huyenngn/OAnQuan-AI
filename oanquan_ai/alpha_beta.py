@@ -3,15 +3,26 @@
 import typing as t
 from copy import deepcopy
 
-from .oanquan import Direction, Move, OAnQuan, Player
+from oanquan_ai.oanquan import Direction, Move, OAnQuan, Player
 
 
-def evaluate_position(game: OAnQuan) -> float:
-    """Evaluate the position of the game."""
-    if game.check_end() and (game.get_winner() != Player.COMPUTER.name):
+def evaluate_position(game: OAnQuan, player: Player) -> float:
+    """Evaluate a player's position in the game"""
+    value = game.score[player.name] - game.score[Player(not player.value).name]
+    if game.check_end() and (game.get_winner() != player.name):
         return float("-inf")
 
-    return game.score[Player.COMPUTER.name] - game.score[Player.PLAYER.name]
+    return value
+
+
+def evaluate_player(game: OAnQuan) -> float:
+    """Evaluate the player's position in the game."""
+    return evaluate_position(game, Player.PLAYER)
+
+
+def evaluate_computer(game: OAnQuan) -> float:
+    """Evaluate the computer's position in the game."""
+    return evaluate_position(game, Player.COMPUTER)
 
 
 def minimax(
@@ -20,7 +31,7 @@ def minimax(
     maximizing: bool = True,
     alpha: float = float("-inf"),
     beta: float = float("inf"),
-    eval_func: t.Callable[[t.Any], float] = evaluate_position,
+    eval_func: t.Callable[[t.Any], float] = evaluate_computer,
 ) -> tuple[float, Move | None]:
     """Minimax algorithm with alpha-beta pruning."""
     if depth == 0 or game.check_end():
@@ -41,7 +52,13 @@ def minimax(
                 game_copy, depth - 1, False, alpha, beta
             )
             move_eval, _ = minimax(game_copy, 0, False, alpha, beta)
-            total_eval = 2 * move_eval + potential_eval
+            if game_copy.check_end() and (
+                game_copy.get_winner() == Player.COMPUTER.name
+            ):
+                factor = 5
+            else:
+                factor = 2
+            total_eval = factor * move_eval + potential_eval
             move_map[total_eval] = move
             max_eval = max(max_eval, total_eval)
             alpha = max(alpha, total_eval)
