@@ -7,7 +7,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from oanquan_ai.alpha_beta import minimax
+from oanquan_ai.alpha_beta import OAnQuanAlphaBeta
 from oanquan_ai.oanquan import Direction, Move, OAnQuan, Player
 
 app = FastAPI()
@@ -78,7 +78,7 @@ def make_rl_move(game: OAnQuan) -> Move:
 
 def make_ab_move(game: OAnQuan) -> Move:
     """Make move based on alpha-beta pruning."""
-    if move := minimax(game)[1]:
+    if move := OAnQuanAlphaBeta().minimax(game)[1]:
         game.make_move(move)
         return move
     return make_random_move(game)
