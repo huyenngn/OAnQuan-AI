@@ -1,12 +1,12 @@
 <script setup>
 import Counter from "@/components/Counter.vue";
 
-const props = defineProps(['id', 'count']);
+const props = defineProps(['id', 'count', 'highlightedField']);
 
 </script>
 
 <template>
-    <div class="quan" :id="'field' + id">
+    <div :class="'quan' + (highlightedField == id ? 'background-color: #ff9595' : '')" :id="'field' + id">
         <Counter :count="count" :id="'counter' + id" />
     </div>
 </template>
@@ -16,5 +16,10 @@ const props = defineProps(['id', 'count']);
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.red {
+    background-color: #ff9595;
+    mix-blend-mode: multiply;
 }
 </style>

@@ -20,7 +20,7 @@ class Player(enum.Enum):
     PLAYER = False
 
 
-class Direction(enum.Enum):
+class Direction(int, enum.Enum):
     """Direction of the movement"""
 
     CLOCKWISE = 1
@@ -106,6 +106,7 @@ class OAnQuan(pydantic.BaseModel):
 
         to_distribute = self.board[pos]
         self.board[pos] = 0
+        index = pos
 
         for i in range(1, to_distribute + 1):
             index = get_normalized_pos(pos + i * direction.value)

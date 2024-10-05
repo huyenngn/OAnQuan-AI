@@ -1,13 +1,15 @@
 """API for the O An Quan game."""
 
 import enum
+import os
 import random
+import typing as t
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from oanquan_ai.alpha_beta import minimax
+from oanquan_ai import alpha_beta_v1, alpha_beta_v2
 from oanquan_ai.oanquan import Direction, Move, OAnQuan, Player
 
 app = FastAPI()
@@ -21,43 +23,23 @@ app.add_middleware(
 )
 
 
-class Level(enum.Enum):
-    """Level of the game"""
+class Model(enum.Enum):
+    """AI models for the game."""
 
-    EASY = "easy"
-    NORMAL = "normal"
-    HARD = "hard"
-    IMPOSSIBLE = "impossible"
+    AB_V1 = "ab_v1"
+    AB_V2 = "ab_v2"
+    RL = "rl"
 
 
-def get_move_func(level: Level):
-    """Get the function to make a move based on the level."""
-    if level == Level.EASY:
+def get_move_func(model: Model) -> t.Callable[[OAnQuan], Move]:
+    """Get the function to make a move based on the AI model."""
+    if model == Model.AB_V1:
+        return get_ab_v1_move
+    if model == Model.AB_V2:
+        return get_ab_v2_move
+    if model == Model.RL:
         return make_random_move
-    if level == Level.NORMAL:
-        func = random.choices(
-            [make_random_move, make_ab_move], cum_weights=[0.6, 0.4]
-        )[0]
-        return func
-    if level == Level.HARD:
-        return make_ab_move
-    return make_rl_move
-
-
-@app.get("/game/start/{level}")
-def start_game(level: Level):
-    """Start a new game of O An Quan."""
-    game = OAnQuan.start_game()
-    if game.get_current_player() == Player.COMPUTER:
-        last_move = get_move_func(level)(game).model_dump()
-    else:
-        last_move = None
-
-    return {
-        "status": "Game started",
-        "game": game.model_dump(),
-        "last_move": last_move,
-    }
+    return make_random_move
 
 
 def make_random_move(game: OAnQuan) -> Move:
@@ -67,28 +49,52 @@ def make_random_move(game: OAnQuan) -> Move:
         [Direction.CLOCKWISE, Direction.COUNTER_CLOCKWISE]
     )
     move = Move(pos=pos, direction=direction)
-    game.make_move(move)
     return move
 
 
-def make_rl_move(game: OAnQuan) -> Move:
-    """Make move based on reinforcement learning."""
-    return make_ab_move(game)
-
-
-def make_ab_move(game: OAnQuan) -> Move:
+def get_ab_v1_move(game: OAnQuan) -> Move:
     """Make move based on alpha-beta pruning."""
-    if move := minimax(game)[1]:
-        game.make_move(move)
+    maximizing = game.get_current_player() == Player.COMPUTER
+    if move := alpha_beta_v1.minimax(game, maximizing=maximizing)[1]:
         return move
     return make_random_move(game)
 
 
-@app.post("/game/move/{level}")
-def make_move(game: OAnQuan, move: Move, level: Level):
+def get_ab_v2_move(game: OAnQuan) -> Move:
+    """Make move based on alpha-beta pruning."""
+    maximizing = game.get_current_player() == Player.COMPUTER
+    if move := alpha_beta_v2.minimax(game, maximizing=maximizing)[1]:
+        return move
+    return make_random_move(game)
+
+
+@app.post("/game/hint", status_code=200)
+def get_hint(game: OAnQuan, model: Model) -> dict[str, t.Any]:
+    """Get a hint for the next move."""
+    return get_move_func(model)(game).model_dump()
+
+
+@app.get("/game/start/{model}", status_code=200)
+def start_game(model: Model):
+    """Start a new game of O An Quan."""
+    game = OAnQuan.start_game()
+    if game.get_current_player() == Player.COMPUTER:
+        last_move = get_move_func(model)(game).model_dump()
+    else:
+        last_move = None
+
+    hint = get_hint(game, model)
+    return {
+        "game": game.model_dump(),
+        "hint": hint,
+        "last_move": last_move,
+    }
+
+
+@app.post("/game/move/{model}", status_code=200)
+def make_move(game: OAnQuan, move: Move, model: Model):
     """Make a move and get the computer's response"""
 
-    # Check if the player's move is valid
     if move.pos not in game.allowed_moves:
         raise HTTPException(status_code=400, detail="Invalid move position.")
 
@@ -96,33 +102,30 @@ def make_move(game: OAnQuan, move: Move, level: Level):
         raise HTTPException(status_code=400, detail="Game has ended.")
 
     try:
-        # Make the player's move
         game.make_move(move)
 
-        # Check if the game has ended after the player's move
         if game.check_end():
             return {
-                "status": "Game over",
                 "game": game.model_dump(),
                 "winner": game.get_winner(),
             }
 
-        last_move = get_move_func(level)(game).model_dump()
+        last_move = get_move_func(model)(game)
+        game.make_move(last_move)
 
-        # Check if the game has ended after the computer's move
         if game.check_end():
             return {
-                "status": "Game over",
                 "game": game.model_dump(),
                 "winner": game.get_winner(),
-                "last_move": last_move,
+                "last_move": last_move.model_dump(),
             }
 
-        # Return the updated game state and the next turn
+        hint = get_hint(game, model)
+
         return {
-            "status": "Move accepted",
             "game": game.model_dump(),
-            "last_move": last_move,
+            "hint": hint,
+            "last_move": last_move.model_dump(),
         }
 
     except Exception as e:
@@ -130,4 +133,5 @@ def make_move(game: OAnQuan, move: Move, level: Level):
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.environ.get("PORT", 8080))
+    uvicorn.run(app, host="0.0.0.0", port=port)

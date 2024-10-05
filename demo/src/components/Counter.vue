@@ -35,7 +35,7 @@ div {
     position: relative;
 }
 
-div span {
+span {
     position: relative;
     display: inline-block;
     text-transform: uppercase;
@@ -48,7 +48,7 @@ div span {
     right: -1em;
     color: red;
     opacity: 0%;
-    font-size: 1.5rem;
+    font-size: 0.75em;
 }
 
 .fadeIn {

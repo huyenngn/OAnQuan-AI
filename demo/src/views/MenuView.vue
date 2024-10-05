@@ -5,24 +5,29 @@ import { RouterLink } from 'vue-router';
 
 <template>
     <nav>
-        <RouterLink to="/game/easy">
-            <Button color="green">EASY</Button>
+        <RouterLink to="/game/ab_v1">
+            <Button color="blue">
+                AlphaBeta v1
+            </Button>
         </RouterLink>
-        <RouterLink to="/game/normal">
-            <Button>NORMAL</Button>
+        <RouterLink to="/game/ab_v2">
+            <Button color="orange">
+                AlphaBeta v2
+            </Button>
         </RouterLink>
-        <RouterLink to="/game/hard">
-            <Button color="orange">HARD</Button>
+        <RouterLink to="/game/rl">
+            <Button color="green">
+                RL model
+            </Button>
         </RouterLink>
-        <RouterLink to="/game/impossible">
-            <Button color="red">IMPOSSIBLE</Button>
+        <RouterLink to="/tutorial">
+            <Button color="red">
+                Tutorial
+            </Button>
         </RouterLink>
     </nav>
     <p>
         Created by <a href="https://huyenngn.github.io/" target="_blank">Huyen Nguyen</a>
-    </p>
-    <p>
-        Check out the code on <a href="https://github.com/huyenngn/OAnQuan-AI" target="_blank">GitHub</a>.
     </p>
 </template>
 
@@ -30,13 +35,13 @@ import { RouterLink } from 'vue-router';
 nav {
     display: flex;
     flex-direction: column;
+    gap: 0.75em;
+    margin: 0.75em 0;
 }
 
 p {
     font-size: 1rem;
-}
-
-a {
-    font-weight: bold;
+    font-weight: normal;
+    margin-top: 0.25rem;
 }
 </style>

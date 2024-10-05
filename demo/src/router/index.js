@@ -1,6 +1,7 @@
+import ClassicGameView from "@/views/ClassicGameView.vue";
+import MenuView from "@/views/MenuView.vue";
+import TutorialView from "@/views/TutorialView.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import GameView from "../views/GameView.vue";
-import MenuView from "../views/MenuView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -11,9 +12,15 @@ const router = createRouter({
             component: MenuView,
         },
         {
-            path: "/game/:level",
+            path: "/game/:model",
             name: "game",
-            component: GameView,
+            component: ClassicGameView,
+            props: true,
+        },
+        {
+            path: "/tutorial",
+            name: "tutorial",
+            component: TutorialView,
         },
     ],
 });

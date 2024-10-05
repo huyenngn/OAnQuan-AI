@@ -4,7 +4,7 @@
 
 A Vietnamese traditional board game, Ô Ăn Quan, with an AI that uses the Minimax algorithm with Alpha-Beta pruning and Reinforcement Learning to play against human players.
 
-To play the game, check it out at [huyenngn.github.io/oanquan](http://35.239.5.44/).
+To play the game, check it out at [oanquan.fun](https://oanquan.fun).
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ source .venv/bin/activate
 pip install -e '.[docs,test]'
 ```
 
-To develop the frontend, use the following command:
+To develop the demonstrator, use the following command:
 
 ```sh
 cd demo

@@ -13,5 +13,5 @@ RUN apt-get update && \
 
 RUN pip install .
 
-EXPOSE 8000
-CMD ["python","-m", "oanquan_ai.api"]
+EXPOSE 8080
+CMD ["uvicorn", "oanquan.api:app", "--host", "0.0.0.0", "--port", "8080"]
